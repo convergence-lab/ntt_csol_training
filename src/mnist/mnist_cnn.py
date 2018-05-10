@@ -34,7 +34,7 @@ def imshow(img):
 
 
 
-def train(epoch):
+def train(epoch, model, train_loader, device, optimizer, args):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
@@ -48,7 +48,7 @@ def train(epoch):
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
 
-def test():
+def test(test_loader, model, device):
     model.eval()
     test_loss = 0
     correct = 0
@@ -123,8 +123,8 @@ def main():
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 
     for epoch in range(1, args.epochs + 1):
-        train(epoch)
-        test()
+        train(epoch, model, train_loader, device, optimizer, args)
+        test(test_loader, model, device)
 
 if __name__ == '__main__':
     main()
