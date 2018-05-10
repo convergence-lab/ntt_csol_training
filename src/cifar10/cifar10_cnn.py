@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
 class Net(nn.Module):
     def __init__(self):
@@ -31,6 +32,26 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
 def main():
+    # Training settings
+    parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
+    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
+                        help='input batch size for training (default: 64)')
+    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
+                        help='input batch size for testing (default: 1000)')
+    parser.add_argument('--epochs', type=int, default=5, metavar='N',
+                        help='number of epochs to train (default: 5)')
+    parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
+                        help='learning rate (default: 0.01)')
+    parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
+                        help='SGD momentum (default: 0.5)')
+    parser.add_argument('--no-cuda', action='store_true', default=False,
+                        help='disables CUDA training')
+    parser.add_argument('--seed', type=int, default=1, metavar='S',
+                        help='random seed (default: 1)')
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
+                        help='how many batches to wait before logging training status')
+    args = parser.parse_args()                    
+    use_cuda = not args.no_cuda and torch.cuda.is_available()
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -51,12 +72,10 @@ def main():
 
     # functions to show an image
 
-
-
-
     # get some random training images
     dataiter = iter(trainloader)
     images, labels = dataiter.next()
+    device = torch.device("cuda" if use_cuda else "cpu")
 
     # show images
     imshow(torchvision.utils.make_grid(images))
@@ -64,7 +83,7 @@ def main():
     print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
     plt.show()
 
-    net = Net()
+    net = Net().to(device)
 
     import torch.optim as optim
 
@@ -110,12 +129,12 @@ def main():
                                   for j in range(4)))
     plt.show()
 
-
     correct = 0
     total = 0
     with torch.no_grad():
         for data in testloader:
             images, labels = data
+            images, labels = images.to(device), labels.to(device)
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
