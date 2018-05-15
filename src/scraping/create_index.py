@@ -3,7 +3,6 @@ import pandas as pd
 from whoosh.fields import Schema, ID, STORED, NGRAM
 from whoosh.filedb.filestore import FileStorage
 
-
 def create_index():
     schema = Schema(title=NGRAM(stored=True),
                     question=NGRAM(stored=True),
