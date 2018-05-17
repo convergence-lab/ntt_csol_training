@@ -7,31 +7,32 @@ from mxnet import gluon
 from mxnet.gluon import nn, rnn
 
 class Net(gluon.Block):
-    def __init__(self, rnn_units, max_length, **kwargs):
+    def __init__(self, rnn_units, max_length, w2v_model, **kwargs):
         super(Net, self).__init__(**kwargs)
         self.max_length = max_length
-        w2v_model = word2vec.Word2Vec.load("./word2vec.gensim.model")
-        idx2w = list(w2v_model.keys())
+        idx2w = list(w2v_model.wv.vocab)
         w2idx = {w: i for i, w in enumerate(idx2w)}
-        w2v_weight = nd.array(w2v_model.values())
+        w2v_weight = nd.array([w2v_model.wv[w] for i, w in enumerate(idx2w)])
 
         with self.name_scope():
-            self.embed = nn.Embedding(len(idx2w), 100, weight_initializer=mx.initializer.Constant(w2v_weight))
+            self.proj = nn.Dense(100)
             self.lstm = rnn.LSTM(rnn_units)
             self.pool = nn.MaxPool2D((1, max_length))
             self.attn = nn.Dense(max_length)
             self.out = nn.Dense(2)
 
     def forward(self, q, a):
-        q = self.embed(q)
+        q = self.proj(q)
         q = self.lstm(q)
         qvec = self.pool(q)
 
-        a = self.embed(a)
+        a = self.proj(a)
         a = self.lstm(a)
-        attn = nd.batch_dot(q, a)
+
+        attn = nd.batch_dot(qvec, a)
         attn = nd.softmax(self.atten(attn))
-        a = nd.batch_dot(att, a)
+
+        a = nd.batch_dot(attn, a)
         avec = self.pool(a)
 
         out = self.out(nd.cocat(qvec, avec, q-a, q*a))

@@ -18,7 +18,7 @@ def train():
         sentence += [tokenize(row.question)]
         sentence += [tokenize(row.answer)]
     model = word2vec.Word2Vec(sentence,
-                      size=100,
+                      size=50,
                       min_count=5,
                       window=5,
                       iter=10,

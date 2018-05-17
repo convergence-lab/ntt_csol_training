@@ -6,19 +6,19 @@ from janome.tokenizer import Tokenizer
 import whoosh.index as index
 from whoosh.qparser.default import MultifieldParser
 
-t = Tokenizer(mmap=True)
+#t = Tokenizer(mmap=True)
 
 def search(query):
-    q = []
-    for token in t.tokenize(query):
-        q += [token.base_form]
+#    q = []
+#    for token in t.tokenize(query):
+#        q += [token.base_form]
 
     ix = index.open_dir("indexdir")
 
     parser = MultifieldParser(['title',
                                'question',
                                'answer'], ix.schema)
-    q = parser.parse(" ".join(q))
+    q = parser.parse(query)
     with ix.searcher() as s:
         results = s.search(q)
 

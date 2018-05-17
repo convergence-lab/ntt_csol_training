@@ -66,11 +66,11 @@ def main():
     train_json = create_data(train_df)
     valid_json = create_data(valid_df)
     test_json = create_data(test_df)
-    with open("train.json", "w") as f:
+    with open("data/train.json", "w") as f:
         f.write(train_json)
-    with open("valid.json", "w") as f:
+    with open("data/valid.json", "w") as f:
         f.write(valid_json)
-    with open("train.json", "w") as f:
+    with open("data/test.json", "w") as f:
         f.write(test_json)
 
 if __name__ == '__main__':
