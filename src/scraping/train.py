@@ -18,12 +18,6 @@ def load_data(w2v_model):
         train_json = json.load(f)
     with open('data/valid.json') as f:
         valid_json = json.load(f)
-    # train_data = parse_data(train_json, w2v_model, t)
-    # valid_data = parse_data(valid_json, w2v_model, t)
-    # with open('train.pkl', "wb") as f:
-        # pickle.dump(train_data, f)
-    # with open('valid.pkl', "wb") as f:
-        # pickle.dump(valid_data, f)
     return train_json, valid_json
 
 def get_wordvector(word, w2v_model):
@@ -137,7 +131,7 @@ def train():
         print(f"Train loss: {train_loss}")
         valid_loss, acc = valid(net, valid_data, max_length, w2v_model, t, device)
         print(f"Valid loss: {valid_loss}, Acc: {acc}")
-        net.save_state_dict(f'models/net-{ep}.pt')
+        torch.save(net, f'models/net-{ep}.pt')
 
 def valid(net, valid_data, max_length, w2v_model, t, device):
     valid_loss = 0
