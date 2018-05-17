@@ -16,7 +16,6 @@ class Net(nn.Module):
     def forward(self, q, a):
         q = F.relu(self.proj(q))
         q, _ = self.lstm(q)
-
         qvec = self.pool(q)
 
         a = F.relu(self.proj(a))
@@ -26,6 +25,7 @@ class Net(nn.Module):
         attn = F.softmax(self.attn(attn), dim=-1)
         attn = torch.transpose(attn, 1, 2)
         a = attn * a
+
         avec = self.pool(a)
 
         out = self.out(torch.cat((qvec, avec, qvec-avec, qvec*avec), dim=-1))
