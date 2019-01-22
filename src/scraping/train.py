@@ -100,11 +100,11 @@ def train():
     steps_per_epoch = 100
 
     in_units = 50
-    units = 50
-    max_length = 100
+    units = 10
+    max_length = 50
     batch_size = 100
     num_layers = 1
-    use_cuda = True
+    use_cuda = False
     t = Tokenizer(mmap=True)
     w2v_model = word2vec.Word2Vec.load("./word2vec.gensim.model")
     train_data, valid_data = load_data(w2v_model)

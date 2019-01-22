@@ -15,7 +15,7 @@ def search(query):
     for token in t.tokenize(query):
         if "名詞" in token.part_of_speech:
             q += [token.base_form]
-
+    print(q)
     ix = index.open_dir("indexdir")
     for target in ['title', 'question', 'answer']:
         parser = QueryParser('title', ix.schema)
@@ -38,6 +38,8 @@ def create_data(df):
     data = []
     for key, row in df.iterrows():
         print(key)
+        if key == 3343:
+            continue
         try:
             entry = {}
             title = row.title
@@ -46,7 +48,7 @@ def create_data(df):
             results = search(title)
             inputs = []
             label = []
-            for elem in results:
+            for i, elem in enumerate(results):
                 inputs += [elem[0]]
                 if elem[2] == row.title:
                     label += [1]
